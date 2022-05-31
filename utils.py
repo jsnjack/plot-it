@@ -8,6 +8,7 @@ from gh import search_issues
 
 CAPACITY_REPORT_FILE = "capacity_report.svg"
 MILESTONE_PROGRESS_REPORT_FILE = "milestone_progress_report.svg"
+NEW_ISSUES_REPORT_FILE = "new_issues_report.svg"
 
 
 def get_closest_thursday(date: datetime.date) -> datetime.date:
@@ -91,6 +92,31 @@ def calculate_milestone_progress(name):
     return closed / (opened + closed)
 
 
+def get_issues_overview():
+    query = " ".join((
+        "repo:surfly/it",
+        f"created:>={(datetime.now().date() - timedelta(days=7)).isoformat()}",
+    ))
+    issues = search_issues(query)
+    data = {
+        "internal": 0,
+    }
+    for item in issues:
+        counted = False
+        if item["labels"]:
+            for label in item["labels"]:
+                if label["name"].startswith("client:"):
+                    c_name = label["name"].replace("client:", "")
+                    data.setdefault(c_name, 0)
+                    data[c_name] += 1
+                    counted = True
+            if not counted:
+                data["internal"] += 1
+        else:
+            data["internal"] += 1
+    return data
+
+
 def generate_report_page():
     with open("report.j2") as f:
         t = Template(f.read())
@@ -101,4 +127,5 @@ def generate_report_page():
             created_at=datetime.now().strftime("%-d %B, %Y"),
             capacity_report_file=CAPACITY_REPORT_FILE,
             milestone_progress_report_file=MILESTONE_PROGRESS_REPORT_FILE,
+            new_issues_report_file=NEW_ISSUES_REPORT_FILE,
         ))

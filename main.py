@@ -5,7 +5,7 @@ import datetime
 import logging
 
 from plot import (generate_milestone_progress_report,
-                  generate_team_capacity_report)
+                  generate_team_capacity_report, generate_new_issues_report)
 from utils import (generate_report_page, generate_timeslots,
                    get_closest_thursday)
 
@@ -51,4 +51,5 @@ if __name__ == "__main__":
 
     generate_team_capacity_report(timeslots)
     generate_milestone_progress_report(args.milestone)
+    generate_new_issues_report()
     generate_report_page()

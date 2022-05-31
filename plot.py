@@ -4,7 +4,8 @@ from typing import Iterator
 import pygal
 
 from utils import (CAPACITY_REPORT_FILE, MILESTONE_PROGRESS_REPORT_FILE,
-                   calculate_capacity, calculate_milestone_progress)
+                   NEW_ISSUES_REPORT_FILE, calculate_capacity,
+                   calculate_milestone_progress, get_issues_overview)
 
 
 def generate_team_capacity_report(timeslots: Iterator[datetime.date]):
@@ -30,3 +31,12 @@ def generate_milestone_progress_report(name: str):
 
     chart.add(name, [{"value": progress, "max_value": 100}])
     chart.render_to_file(MILESTONE_PROGRESS_REPORT_FILE)
+
+
+def generate_new_issues_report():
+    data = get_issues_overview()
+    chart = pygal.Pie(inner_radius=.75)
+    chart.title = "New issues distribution per client, last 7 days"
+    for issue_type, amount in data.items():
+        chart.add(issue_type, amount)
+    chart.render_to_file(NEW_ISSUES_REPORT_FILE)
