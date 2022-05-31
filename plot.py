@@ -3,7 +3,8 @@ from typing import Iterator
 
 import pygal
 
-from utils import calculate_capacity, calculate_milestone_progress
+from utils import (CAPACITY_REPORT_FILE, MILESTONE_PROGRESS_REPORT_FILE,
+                   calculate_capacity, calculate_milestone_progress)
 
 
 def generate_team_capacity_report(timeslots: Iterator[datetime.date]):
@@ -17,7 +18,7 @@ def generate_team_capacity_report(timeslots: Iterator[datetime.date]):
     chart.add("devops", devops_diff)
     chart.add("cobro",  cobro_diff)
     chart.add("dashboard", dashboard_diff)
-    chart.render_to_file("capacity_report.svg")
+    chart.render_to_file(CAPACITY_REPORT_FILE)
 
 
 def generate_milestone_progress_report(name: str):
@@ -28,4 +29,4 @@ def generate_milestone_progress_report(name: str):
     chart.value_formatter = lambda x: '{:.10g}%'.format(x)
 
     chart.add(name, [{"value": progress, "max_value": 100}])
-    chart.render_to_file("milestone_progress_report.svg")
+    chart.render_to_file(MILESTONE_PROGRESS_REPORT_FILE)

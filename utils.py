@@ -2,9 +2,12 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, Iterator
 
-from traitlets import Bool
-
+from jinja2 import Template
 from gh import search_issues
+
+
+CAPACITY_REPORT_FILE = "capacity_report.svg"
+MILESTONE_PROGRESS_REPORT_FILE = "milestone_progress_report.svg"
 
 
 def get_closest_thursday(date: datetime.date) -> datetime.date:
@@ -46,7 +49,7 @@ def calculate_capacity(team: str, timeslots: Iterator[datetime.date]) -> Iterato
     return data
 
 
-def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime.date], issues: Iterator[Any], opened: Bool):
+def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime.date], issues: Iterator[Any], opened: bool):
     for week_number, week_until in enumerate(timeslots):
         for item in issues:
             event_date = datetime.fromisoformat(item["created_at"][:-1]).date()
@@ -86,3 +89,16 @@ def calculate_milestone_progress(name):
         else:
             logging.warning(f"Unhandled issue state {item['state']} {item['html_url']}")
     return closed / (opened + closed)
+
+
+def generate_report_page():
+    with open("report.j2") as f:
+        t = Template(f.read())
+
+    # Create HTML overview
+    with open("report.html", "w") as f:
+        f.write(t.render(
+            created_at=datetime.now().strftime("%-d %B, %Y"),
+            capacity_report_file=CAPACITY_REPORT_FILE,
+            milestone_progress_report_file=MILESTONE_PROGRESS_REPORT_FILE,
+        ))
