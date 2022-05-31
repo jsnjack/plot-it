@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      figure {
+        margin: auto;
+      }
+    </style>
 </head>
 
 <body>
@@ -21,15 +26,29 @@
           <div class="divider"></div>
 
           <div>
-            <img src="{{capacity_report_file}}" class="img-responsive" alt="Roadmap progress">
+            <figure>
+              <embed type="image/svg+xml" class="img-responsive" src="{{ milestone_progress_report_file }}" />
+            </figure>
           </div>
 
           <div class="divider"></div>
 
           <div>
-          <a href="{{ milestone_progress_report_file }}" target="_blank">
-            <img src="{{ milestone_progress_report_file }}" class="img-responsive" alt="Team capacity chart">
-          </a>
+            <figure>
+              <embed type="image/svg+xml" class="img-responsive" src="{{ capacity_report_file }}" />
+            </figure>
+            <a class="float-right" href="{{ capacity_report_file }}" target="_blank">
+              <button class="btn btn-link">Open &#128471;</button>
+            </a>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div>
+            <figure>
+              <embed type="image/svg+xml" class="img-responsive" src="{{ new_issues_report_file }}" />
+            </figure>
           </div>
 
           <div class="divider"></div>
