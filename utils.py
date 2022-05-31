@@ -2,8 +2,6 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, Iterator
 
-from traitlets import Bool
-
 from gh import search_issues
 
 
@@ -46,7 +44,7 @@ def generate_diff(team: str, timeslots: Iterator[datetime.date]) -> Iterator[int
     return data
 
 
-def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime.date], issues: Iterator[Any], opened: Bool):
+def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime.date], issues: Iterator[Any], opened: Any):
     for week_number, week_until in enumerate(timeslots):
         for item in issues:
             event_date = datetime.fromisoformat(item["created_at"][:-1]).date()
