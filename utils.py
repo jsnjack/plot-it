@@ -68,3 +68,21 @@ def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime
                         data[week_number] += 1
                     else:
                         data[week_number] -= 1
+
+
+def milestone_progress(name):
+    query = " ".join((
+        "repo:surfly/it",
+        f"milestone:{name}",
+    ))
+    issues = search_issues(query)
+    opened = 0
+    closed = 0
+    for item in issues:
+        if item["state"] == "open":
+            opened += 1
+        elif item["state"] == "closed":
+            closed += 1
+        else:
+            logging.warning(f"Unhandled issue state {item['state']} {item['html_url']}")
+    return closed / (opened + closed)

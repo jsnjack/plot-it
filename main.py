@@ -4,7 +4,7 @@ import argparse
 import datetime
 import logging
 
-from plot import generate_timeline
+from plot import generate_milestone_progress, generate_timeline
 from utils import generate_timeslots, get_closest_thursday
 
 
@@ -21,6 +21,12 @@ def get_args():
         type=int,
         default=1,
         help="Group issues by provided amount of weeks"
+    )
+    parser.add_argument(
+        "--milestone",
+        type=str,
+        default="Q2_2022",
+        help="Calculate the progress of the milestone"
     )
     parser.add_argument(
         "-v", "--verbose",
@@ -41,3 +47,4 @@ if __name__ == "__main__":
 
     timeslots = generate_timeslots(get_closest_thursday(args.since))
     generate_timeline(timeslots)
+    generate_milestone_progress(args.milestone)

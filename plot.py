@@ -3,7 +3,7 @@ from typing import Iterator
 
 import pygal
 
-from utils import generate_diff
+from utils import generate_diff, milestone_progress
 
 
 def generate_timeline(timeslots: Iterator[datetime.date]):
@@ -18,3 +18,14 @@ def generate_timeline(timeslots: Iterator[datetime.date]):
     chart.add("cobro",  cobro_diff)
     chart.add("dashboard", dashboard_diff)
     chart.render_to_file("diff.svg")
+
+
+def generate_milestone_progress(name: str):
+    progress = int(milestone_progress(name) * 100)
+
+    chart = pygal.SolidGauge(half_pie=True, inner_radius=0.70)
+    chart.title = "Roadmap progress"
+    chart.value_formatter = lambda x: '{:.10g}%'.format(x)
+
+    chart.add(name, [{"value": progress, "max_value": 100}])
+    chart.render_to_file("progress.svg")
