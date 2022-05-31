@@ -4,7 +4,7 @@ import argparse
 import datetime
 import logging
 
-from plot import generate_milestone_progress, generate_timeline
+from plot import generate_milestone_progress_report, generate_team_capacity_report
 from utils import generate_timeslots, get_closest_thursday
 
 
@@ -46,5 +46,6 @@ if __name__ == "__main__":
         logging.basicConfig(format='%(message)s')
 
     timeslots = generate_timeslots(get_closest_thursday(args.since))
-    generate_timeline(timeslots)
-    generate_milestone_progress(args.milestone)
+
+    generate_team_capacity_report(timeslots)
+    generate_milestone_progress_report(args.milestone)

@@ -22,7 +22,7 @@ def generate_timeslots(date: datetime.date) -> Iterator[datetime.date]:
     return result
 
 
-def generate_diff(team: str, timeslots: Iterator[datetime.date]) -> Iterator[int]:
+def calculate_capacity(team: str, timeslots: Iterator[datetime.date]) -> Iterator[int]:
     data = [0 for x in timeslots]
     all_open_query = " ".join((
         "repo:surfly/it",
@@ -70,7 +70,7 @@ def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime
                         data[week_number] -= 1
 
 
-def milestone_progress(name):
+def calculate_milestone_progress(name):
     query = " ".join((
         "repo:surfly/it",
         f"milestone:{name}",
