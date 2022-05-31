@@ -11,7 +11,7 @@ def generate_timeline(timeslots: Iterator[datetime.date]):
     devops_diff = generate_diff("devops", timeslots)
     cobro_diff = generate_diff("cobro", timeslots)
 
-    chart = pygal.Dot(width=1600, x_label_rotation=-90)
+    chart = pygal.Dot(width=50 * len(timeslots), x_label_rotation=-90)
     chart.title = "Open / Closed issues difference per team"
     chart.x_labels = map(lambda d: d.strftime("%G, w%V"), timeslots)
     chart.add("devops", devops_diff)
