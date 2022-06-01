@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Engineering report</title>
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      figure {
+        margin: auto;
+      }
+    </style>
+</head>
+
+<body>
+    <div class="container grid-lg">
+        <div class="hero bg-gray">
+            <div class="hero-body">
+              <h1>Engineering report</h1>
+              <p>{{ created_at }}<p>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div>
+            <figure>
+              <embed type="image/svg+xml" class="img-responsive" src="{{ milestone_progress_report_file }}" />
+            </figure>
+          </div>
+
+          <div class="divider"></div>
+
+          <div>
+            <figure>
+              <embed type="image/svg+xml" class="img-responsive" src="{{ capacity_report_file }}" />
+            </figure>
+            <a class="float-right" href="{{ capacity_report_file }}" target="_blank">
+              <button class="btn btn-link">Open &#128471;</button>
+            </a>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div>
+            <figure>
+              <embed type="image/svg+xml" class="img-responsive" src="{{ new_issues_report_file }}" />
+            </figure>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="empty">
+            <p class="empty-title h5">Session robustness</p>
+            <p class="empty-subtitle">Research will be started in Q3</p>
+          </div>
+    </div>
+</body>
+
+</html>

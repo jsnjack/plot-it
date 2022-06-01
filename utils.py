@@ -2,7 +2,13 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, Iterator
 
+from jinja2 import Template
 from gh import search_issues
+
+
+CAPACITY_REPORT_FILE = "capacity_report.svg"
+MILESTONE_PROGRESS_REPORT_FILE = "milestone_progress_report.svg"
+NEW_ISSUES_REPORT_FILE = "new_issues_report.svg"
 
 
 def get_closest_thursday(date: datetime.date) -> datetime.date:
@@ -20,7 +26,7 @@ def generate_timeslots(date: datetime.date) -> Iterator[datetime.date]:
     return result
 
 
-def generate_diff(team: str, timeslots: Iterator[datetime.date]) -> Iterator[int]:
+def calculate_capacity(team: str, timeslots: Iterator[datetime.date]) -> Iterator[int]:
     data = [0 for x in timeslots]
     all_open_query = " ".join((
         "repo:surfly/it",
@@ -44,7 +50,9 @@ def generate_diff(team: str, timeslots: Iterator[datetime.date]) -> Iterator[int
     return data
 
 
-def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime.date], issues: Iterator[Any], opened: Any):
+==== BASE ====
+def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime.date], issues: Iterator[Any], opened: Bool):
+==== BASE ====
     for week_number, week_until in enumerate(timeslots):
         for item in issues:
             event_date = datetime.fromisoformat(item["created_at"][:-1]).date()
@@ -66,3 +74,60 @@ def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime
                         data[week_number] += 1
                     else:
                         data[week_number] -= 1
+
+
+def calculate_milestone_progress(name):
+    query = " ".join((
+        "repo:surfly/it",
+        f"milestone:{name}",
+    ))
+    issues = search_issues(query)
+    opened = 0
+    closed = 0
+    for item in issues:
+        if item["state"] == "open":
+            opened += 1
+        elif item["state"] == "closed":
+            closed += 1
+        else:
+            logging.warning(f"Unhandled issue state {item['state']} {item['html_url']}")
+    return closed / (opened + closed)
+
+
+def get_issues_overview():
+    query = " ".join((
+        "repo:surfly/it",
+        f"created:>={(datetime.now().date() - timedelta(days=7)).isoformat()}",
+    ))
+    issues = search_issues(query)
+    data = {
+        "internal": 0,
+    }
+    for item in issues:
+        counted = False
+        if item["labels"]:
+            for label in item["labels"]:
+                if label["name"].startswith("client:"):
+                    c_name = label["name"].replace("client:", "")
+                    data.setdefault(c_name, 0)
+                    data[c_name] += 1
+                    counted = True
+            if not counted:
+                data["internal"] += 1
+        else:
+            data["internal"] += 1
+    return data
+
+
+def generate_report_page():
+    with open("report.j2") as f:
+        t = Template(f.read())
+
+    # Create HTML overview
+    with open("report.html", "w") as f:
+        f.write(t.render(
+            created_at=datetime.now().strftime("%-d %B, %Y"),
+            capacity_report_file=CAPACITY_REPORT_FILE,
+            milestone_progress_report_file=MILESTONE_PROGRESS_REPORT_FILE,
+            new_issues_report_file=NEW_ISSUES_REPORT_FILE,
+        ))

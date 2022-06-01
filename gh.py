@@ -1,6 +1,8 @@
 
 import logging
 import os
+from datetime import datetime
+from time import sleep
 
 import requests
 
@@ -24,14 +26,29 @@ def log_response(method, response):
         logging.info(response.content)
 
 
+def send_request(method, *args, **kwargs):
+    resp = getattr(requests, method)(*args, **kwargs)
+    log_response(method, resp)
+
+    # Handle rate limiting
+    if resp.status_code == 403 and resp.headers["X-RateLimit-Remaining"] == "0":
+        wait_until = datetime.fromtimestamp(int(resp.headers["X-RateLimit-Reset"]))
+        to_sleep = max((wait_until - datetime.now()).total_seconds() + 1, 1)
+        logging.warning(f"Rate limited. Waiting {to_sleep}s...")
+        sleep(to_sleep)
+        return send_request(method, *args, **kwargs)
+
+    return resp
+
+
 def _gh_request(method, *args, **kwargs):
     """
     Make the request to github api. Automatically authenticates the request and
     handles pagination
     """
     updated = set_request_defaults(**kwargs)
-    response = getattr(requests, method)(*args, **updated)
-    log_response(method, response)
+    response = send_request(method, *args, **updated)
+
     if response.status_code == 204:
         return
     data = response.json()["items"]
@@ -41,8 +58,7 @@ def _gh_request(method, *args, **kwargs):
         # They are already included in next_url
         if "params" in updated:
             del updated["params"]
-        response = getattr(requests, method)(*args_list, **updated)
-        log_response(method, response)
+        response = send_request(method, *args_list, **updated)
         data.extend(response.json()["items"])
     return data
 
