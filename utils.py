@@ -50,9 +50,7 @@ def calculate_capacity(team: str, timeslots: Iterator[datetime.date]) -> Iterato
     return data
 
 
-==== BASE ====
-def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime.date], issues: Iterator[Any], opened: Bool):
-==== BASE ====
+def assign_issues_to_timeslots(data: Iterator[int], timeslots: Iterator[datetime.date], issues: Iterator[Any], opened: bool):
     for week_number, week_until in enumerate(timeslots):
         for item in issues:
             event_date = datetime.fromisoformat(item["created_at"][:-1]).date()
